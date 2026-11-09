@@ -5,8 +5,12 @@ Summary:	Java source parser and AST
 Group:		Development/Java
 License:	(LGPL-3.0-or-later OR Apache-2.0)
 URL:		https://github.com/javaparser/javaparser
+# The GitHub tag also ships the Maven wrapper jar and prebuilt jars
+# under javaparser-symbol-solver-testing. Those are removed from this
+# archive. The core module is what this package builds.
 Source0:	https://github.com/javaparser/javaparser/archive/refs/tags/javaparser-parent-%{version}.tar.gz#/javaparser-parent-%{version}.tar.gz
-# The tag ships the JavaCC grammar. These generated parser classes are source.
+# The tag ships the JavaCC grammar, not the generated parser. These
+# files are the generated Java sources (no class files).
 Source1:	https://repo1.maven.org/maven2/com/github/javaparser/javaparser-core/%{version}/javaparser-core-%{version}-sources.jar
 BuildArch:	noarch
 BuildRequires:	python
@@ -89,6 +93,38 @@ rm -rf javaparser-core javaparser-core-testing javaparser-core-testing-bdd \
 	javaparser-core-generators javaparser-core-metamodel-generator \
 	javaparser-core-serialization javaparser-symbol-solver-core \
 	javaparser-symbol-solver-testing
+
+%check
+export JAVA_HOME=%{_jvmdir}/java-openjdk
+export PATH=$JAVA_HOME/bin:$PATH
+mkdir -p check
+cat > check/Hello.java <<'END'
+package demo;
+public class Hello {
+	public int n() { return 1; }
+}
+END
+cat > check/Main.java <<'END'
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import java.io.File;
+public class Main {
+	public static void main(String[] args) throws Exception {
+		java.util.Optional<MethodDeclaration> found = StaticJavaParser.parse(new File("Hello.java"))
+			.findFirst(MethodDeclaration.class);
+		if (!found.isPresent() || !"n".equals(found.get().getNameAsString())) {
+			throw new AssertionError(found.toString());
+		}
+		System.out.println("javaparser_ok " + found.get().getNameAsString());
+	}
+}
+END
+cd check
+javac --release 8 -encoding UTF-8 -Xlint:-options \
+	-cp ../target/javaparser-core-%{version}.jar -d . Main.java
+out=$(java -cp .:../target/javaparser-core-%{version}.jar Main)
+echo "$out"
+echo "$out" | grep -q javaparser_ok
 
 %files -f .mfiles
 %doc LICENSE LICENSE.APACHE LICENSE.GPL LICENSE.LGPL readme.md
