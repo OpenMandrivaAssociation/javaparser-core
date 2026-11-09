@@ -1,6 +1,6 @@
 Name:		javaparser-core
 Version:	3.28.2
-Release:	1
+Release:	2
 Summary:	Java source parser and AST
 Group:		Development/Java
 License:	(LGPL-3.0-or-later OR Apache-2.0)
