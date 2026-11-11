@@ -1,3 +1,7 @@
 sources:
-  javaparser-core-3.28.2-sources.jar: 045b5a83aa26dca0d92e3ef517a1a14bd417b578
   javaparser-parent-3.28.2.tar.gz: 777a5d5e3364914a441a787b2c06b7bed617dfe6
+  javaparser-core-3.28.2-generated.tar.gz: a5e0d9954ab111747438d77c9a50c9f6a44d25f9
+  javaparser-core-3.27.1-generated.tar.gz: 665dc8f57370ae5871f71c96eaa595d365f823d6
+  javaparser-parent-3.27.1.tar.gz: 840f137f4796730921a59027c7a552cd526bb89f
+removed_sources:
+  javaparser-core-3.28.2-sources.jar: 045b5a83aa26dca0d92e3ef517a1a14bd417b578
